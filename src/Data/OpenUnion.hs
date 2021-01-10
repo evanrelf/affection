@@ -9,7 +9,7 @@
 {-# LANGUAGE TypeOperators #-}
 
 module Data.OpenUnion
-  ( Union (..)
+  ( Union
   , Member (..)
   , decompose
   , weaken
