@@ -4,7 +4,7 @@
 module Effect.Internal.Demo where
 
 import Control.Monad.Free (Free (..), foldFree)
-import Data.OpenUnion (Member (..), Union)
+import Data.OpenUnion (Member (..), Members, Union)
 import Effect (sumToM)
 import Effect.Bell (Bell (..), bellToIO)
 import Effect.Teletype (Teletype (..), readLine, teletypeToIO, writeLine)
@@ -23,9 +23,6 @@ teletypeProgram = do
 
 teletypeMain :: IO ()
 teletypeMain = foldFree teletypeToIO teletypeProgram
-
-
-type TeletypeAndBell = Union '[Teletype, Bell]
 
 
 send :: (Functor e, Member e es) => e (Free (Union es) a) -> Free (Union es) a
@@ -48,16 +45,16 @@ ringBell' = send $ RingBell (pure ())
 -- teletypeAndBellToIO = sumToM teletypeToIO bellToIO
 
 
--- teletypeAndBellProgram :: Free TeletypeAndBell ()
--- teletypeAndBellProgram = do
---   message <- readLine'
+teletypeAndBellProgram :: Members '[Teletype, Bell] es => Free (Union es) ()
+teletypeAndBellProgram = do
+  message <- readLine'
 
---   if message == "Ring the bell!" then do
---     ringBell'
---     writeLine' "Rang the bell!"
+  if message == "Ring the bell!" then do
+    ringBell'
+    writeLine' "Rang the bell!"
 
---   else
---     writeLine' "Didn't ring the bell"
+  else
+    writeLine' "Didn't ring the bell"
 
 
 -- teletypeAndBellMain :: IO ()

@@ -6,21 +6,27 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
 
 module Data.OpenUnion
-  ( Union
+  ( Effect
+  , Union
   , Member (..)
+  , Members
   , decompose
   , weaken
   , extract
   )
 where
 
-import Data.Kind (Type)
+import Data.Kind (Constraint, Type)
 
 
-data Union (es :: [Type -> Type]) a where
+type Effect = Type -> Type
+
+
+data Union (es :: [Effect]) a where
   This :: Functor e => e a -> Union (e ': es) a
   Next :: Union es a -> Union (any ': es) a
 
@@ -45,6 +51,11 @@ instance Member e (e ': es) where
   project = \case
     This x -> Just x
     Next _ -> Nothing
+
+
+type family Members (es :: [Effect]) (es' :: [Effect]) :: Constraint where
+  Members '[] _ = ()
+  Members (e ': es) es' = (Member e es', Members es es')
 
 
 instance {-# OVERLAPPABLE #-} Member e es => Member e (any ': es) where
