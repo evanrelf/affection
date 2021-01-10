@@ -20,12 +20,19 @@ import Data.Kind (Type)
 
 
 data Union (es :: [Type -> Type]) a where
-  This :: e a -> Union (e ': es) a
+  This :: Functor e => e a -> Union (e ': es) a
   Next :: Union es a -> Union (any ': es) a
 
 
+instance Functor (Union es) where
+  fmap :: (a -> b) -> Union es a -> Union es b
+  fmap f = \case
+    This x -> This (fmap f x)
+    Next u -> Next (fmap f u)
+
+
 class Member e es where
-  inject :: e a -> Union es a
+  inject :: Functor e => e a -> Union es a
   project :: Union es a -> Maybe (e a)
 
 
