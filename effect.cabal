@@ -1,0 +1,34 @@
+cabal-version: 3.0
+
+name:        effect
+version:     0.0.0.0
+-- synopsis:
+-- description:
+author:      Evan Relf <evan@evanrelf.com>
+maintainer:  Evan Relf <evan@evanrelf.com>
+homepage:    https://github.com/evanrelf/effect
+license:     ISC
+copyright:   2021 Evan Relf
+
+
+common common
+  build-depends: base
+  default-language: Haskell2010
+  ghc-options:
+    -Wall
+    -Wcompat
+    -Werror=incomplete-record-updates
+    -Werror=incomplete-uni-patterns
+    -Werror=missing-fields
+    -Werror=partial-fields
+    -Widentities
+    -Wmissing-home-modules
+    -Wredundant-constraints
+    -fshow-warning-groups
+
+
+library
+  import: common
+  hs-source-dirs: src
+  exposed-modules:
+    , Effect
