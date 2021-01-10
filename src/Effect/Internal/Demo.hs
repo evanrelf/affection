@@ -4,7 +4,7 @@
 module Effect.Internal.Demo where
 
 import Control.Monad.Free (Free (..), foldFree)
-import Data.Union (Union, Member (..))
+import Data.OpenUnion (Member (..), Union)
 import Effect (sumToM)
 import Effect.Bell (Bell (..), bellToIO)
 import Effect.Teletype (Teletype (..), readLine, teletypeToIO, writeLine)

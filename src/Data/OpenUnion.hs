@@ -8,7 +8,7 @@
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE TypeOperators #-}
 
-module Data.Union
+module Data.OpenUnion
   ( Union (..)
   , Member (..)
   , decompose
