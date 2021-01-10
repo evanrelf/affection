@@ -33,3 +33,4 @@ library
   exposed-modules:
     , Control.Monad.Free
     , Effect
+    , Effect.Teletype
