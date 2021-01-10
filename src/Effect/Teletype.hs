@@ -1,4 +1,3 @@
-{-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE LambdaCase #-}
 
@@ -6,11 +5,11 @@ module Effect.Teletype
   ( Teletype (..)
   , readLine
   , writeLine
-  , runTeletypeIO
+  , teletypeToIO
   )
 where
 
-import Control.Monad.Free (Free (..), runFree)
+import Control.Monad.Free (Free (..))
 
 
 data Teletype k
@@ -27,8 +26,8 @@ writeLine :: String -> Free Teletype ()
 writeLine message = Free $ WriteLine message (pure ())
 
 
-runTeletypeIO :: Free Teletype a -> IO a
-runTeletypeIO = runFree \case
+teletypeToIO :: Teletype a -> IO a
+teletypeToIO = \case
   ReadLine k -> do
     message <- getLine
     pure $ k message

@@ -34,4 +34,5 @@ library
     , Control.Monad.Free
     , Effect
     , Effect.Bell
+    , Effect.Internal.Demo
     , Effect.Teletype
