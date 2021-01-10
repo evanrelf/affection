@@ -2,6 +2,7 @@
 {-# LANGUAGE EmptyCase #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GADTs #-}
+{-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE PolyKinds #-}
@@ -36,15 +37,21 @@ class Member e es where
   project :: Union es a -> Maybe (e a)
 
 
-instance Member e (e ': rest) where
+instance Member e (e ': es) where
+  inject :: Functor e => e a -> Union (e ': es) a
   inject = This
+
+  project :: Union (e ': es) a -> Maybe (e a)
   project = \case
     This x -> Just x
     Next _ -> Nothing
 
 
 instance {-# OVERLAPPABLE #-} Member e es => Member e (any ': es) where
+  inject :: Functor e => e a -> Union (any ': es) a
   inject = Next . inject
+
+  project :: Union (any ': es) a -> Maybe (e a)
   project = \case
     Next u -> project u
     This _ -> Nothing
