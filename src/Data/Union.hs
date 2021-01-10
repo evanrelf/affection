@@ -1,30 +1,59 @@
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE EmptyCase #-}
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GADTs #-}
+{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE TypeOperators #-}
 
-module Data.Union where
+module Data.Union
+  ( Union (..)
+  , Member (..)
+  , decompose
+  , weaken
+  , extract
+  )
+where
 
 import Data.Kind (Type)
 
 
-data Union (xs :: [Type -> Type]) a where
-  Empty :: Union '[] a
-  Zero :: f a -> Union (x ': xs) a
-  Succ :: Union xs a -> Union (x ': xs) a
+data Union (es :: [Type -> Type]) a where
+  This :: e a -> Union (e ': es) a
+  Next :: Union es a -> Union (any ': es) a
 
 
-empty :: Union '[] Bool
-empty = Empty
+class Member e es where
+  inject :: e a -> Union es a
+  project :: Union es a -> Maybe (e a)
 
 
-one :: Union '[Maybe] Bool
-one = Zero $ Just True
+instance Member e (e ': rest) where
+  inject = This
+  project = \case
+    This x -> Just x
+    Next _ -> Nothing
 
 
-two1 :: Union '[Maybe, Either ()] Bool
-two1 = Zero $ Just True
+instance {-# OVERLAPPABLE #-} Member e es => Member e (any ': es) where
+  inject = Next . inject
+  project = \case
+    Next u -> project u
+    This _ -> Nothing
 
 
-two2 :: Union '[Maybe, Either ()] Bool
-two2 = Succ $ Zero $ Right True
+decompose :: Union (e ': es) a -> Either (Union es a) (e a)
+decompose = \case
+  This x -> Right x
+  Next u -> Left u
+
+
+weaken :: Union es a -> Union (any ': es) a
+weaken = Next
+
+
+extract :: Union '[e] a -> e a
+extract = \case
+  This x -> x
+  Next u -> case u of
