@@ -28,16 +28,20 @@ teletypeMain = runFree teletypeToIO teletypeProgram
 type TeletypeAndBell = Union '[Teletype, Bell]
 
 
+send :: (Functor e, Member e es) => e (Free (Union es) a) -> Free (Union es) a
+send = Free . inject
+
+
 readLine' :: Member Teletype es => Free (Union es) String
-readLine' = Free $ inject $ ReadLine pure
+readLine' = send $ ReadLine pure
 
 
 writeLine' :: Member Teletype es => String -> Free (Union es) ()
-writeLine' message = Free $ inject $ WriteLine message (pure ())
+writeLine' message = send $ WriteLine message (pure ())
 
 
 ringBell' :: Member Bell es => Free (Union es) ()
-ringBell' = Free $ inject $ RingBell (pure ())
+ringBell' = send $ RingBell (pure ())
 
 
 -- teletypeAndBellToIO :: TeletypeAndBell a -> IO a
