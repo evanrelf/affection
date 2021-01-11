@@ -10,7 +10,7 @@ module Effect.Embed
   ( Embed
   , embed
   , runEmbed
-  , runEmbed'
+  , runM
   )
 where
 
@@ -42,5 +42,5 @@ runEmbed :: (Monad m, Member m es) => Eff (Embed m ': es) a -> Eff es a
 runEmbed = interpret embedToM
 
 
-runEmbed' :: Monad m => Eff '[Embed m] a -> m a
-runEmbed' (Eff free) = foldFree (embedToM . extract) free
+runM :: Monad m => Eff '[Embed m] a -> m a
+runM (Eff free) = foldFree (embedToM . extract) free
