@@ -6,9 +6,9 @@ where
 
 import Effect.Internal.Eff
   ( Eff
+  , send
   , interpret
   , runM
-  , send
   )
 import Effect.Internal.OpenUnion
   ( Member
