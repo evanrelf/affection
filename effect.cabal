@@ -41,6 +41,7 @@ library
     -- Internals
     , Effect.Internal.Eff
     , Effect.Internal.Free
+    , Effect.Internal.Freer
     , Effect.Internal.OpenUnion
   other-modules:
     , Effect.Internal.Demo
