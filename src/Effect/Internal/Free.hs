@@ -2,13 +2,7 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE RankNTypes #-}
 
-module Control.Monad.Free
-  ( Free (..)
-  , liftFree
-  , hoistFree
-  , foldFree
-  )
-where
+module Effect.Internal.Free where
 
 
 data Free f a

@@ -1,8 +1,16 @@
 module Effect
-  ( module Effect.Internal
-  , module Data.OpenUnion
+  ( module Effect.Internal.Eff
+  , module Effect.Internal.OpenUnion
   )
 where
 
-import Data.OpenUnion (Member (..), Members)
-import Effect.Internal (Eff, interpret, runM, send)
+import Effect.Internal.Eff
+  ( Eff
+  , interpret
+  , runM
+  , send
+  )
+import Effect.Internal.OpenUnion
+  ( Member
+  , Members
+  )

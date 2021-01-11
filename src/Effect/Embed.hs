@@ -17,10 +17,10 @@ module Effect.Embed
   )
 where
 
-import Control.Monad.Free (foldFree)
-import Data.OpenUnion (extract)
 import Effect (Member, interpret, send)
-import Effect.Internal (Eff (..))
+import Effect.Internal.Eff (Eff (..))
+import Effect.Internal.Free (foldFree)
+import Effect.Internal.OpenUnion (extract)
 
 
 data Embed m a

@@ -5,10 +5,10 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeOperators #-}
 
-module Effect.Internal where
+module Effect.Internal.Eff where
 
-import Control.Monad.Free (Free, foldFree, hoistFree, liftFree)
-import Data.OpenUnion (Member (..), Union, decompose, extract)
+import Effect.Internal.Free (Free, foldFree, hoistFree, liftFree)
+import Effect.Internal.OpenUnion (Member (..), Union, decompose, extract)
 
 
 newtype Eff es a = Eff (Free (Union es) a)

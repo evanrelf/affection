@@ -9,16 +9,7 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
 
-module Data.OpenUnion
-  ( Effect
-  , Union
-  , Member (..)
-  , Members
-  , decompose
-  , weaken
-  , extract
-  )
-where
+module Effect.Internal.OpenUnion where
 
 import Data.Kind (Constraint, Type)
 

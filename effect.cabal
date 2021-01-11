@@ -31,11 +31,16 @@ library
   import: common
   hs-source-dirs: src
   exposed-modules:
-    , Control.Monad.Free
-    , Data.OpenUnion
+    -- Defining effects
     , Effect
+    -- Included effects
     , Effect.Bell
     , Effect.Embed
-    , Effect.Internal.Demo
     , Effect.Reader
     , Effect.Teletype
+    -- Internals
+    , Effect.Internal.Eff
+    , Effect.Internal.Free
+    , Effect.Internal.OpenUnion
+  other-modules:
+    , Effect.Internal.Demo
