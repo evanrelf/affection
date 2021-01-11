@@ -44,11 +44,6 @@ instance Member e (e ': es) where
     Next _ -> Nothing
 
 
-type family Members (es :: [Effect]) (es' :: [Effect]) :: Constraint where
-  Members '[] _ = ()
-  Members (e ': es) es' = (Member e es', Members es es')
-
-
 instance {-# OVERLAPPABLE #-} Member e es => Member e (any ': es) where
   inject :: Functor e => e a -> Union (any ': es) a
   inject = Next . inject
@@ -57,6 +52,11 @@ instance {-# OVERLAPPABLE #-} Member e es => Member e (any ': es) where
   project = \case
     Next u -> project u
     This _ -> Nothing
+
+
+type family Members (es :: [Effect]) (es' :: [Effect]) :: Constraint where
+  Members '[] _ = ()
+  Members (e ': es) es' = (Member e es', Members es es')
 
 
 decompose :: Union (e ': es) a -> Either (Union es a) (e a)
