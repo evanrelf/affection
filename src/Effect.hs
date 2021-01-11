@@ -2,6 +2,7 @@
 {-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeOperators #-}
 
 module Effect
@@ -14,8 +15,8 @@ module Effect
   )
 where
 
-import Control.Monad.Free (Free, foldFree, liftFree)
-import Data.OpenUnion (Member (..), Members, Union, extract)
+import Control.Monad.Free (Free, foldFree, hoistFree, liftFree)
+import Data.OpenUnion (Member (..), Members, Union, decompose, extract)
 
 
 newtype Eff es a = Eff (Free (Union es) a)
@@ -27,12 +28,20 @@ send = Eff . liftFree . inject
 
 
 interpret
-  :: Member m es
-  => (forall x. e x -> m x)
-  -> Eff (e ': es) a
+  :: forall e1 e2 es a
+   . Functor e2
+  => Member e2 es
+  => (forall x. e1 x -> e2 x)
+  -> Eff (e1 ': es) a
   -> Eff es a
-interpret handler effect = undefined
+interpret handler (Eff free) = Eff (hoistFree f free)
+  where
+  f :: forall x. Union (e1 ': es) x -> Union es x
+  f union =
+    case decompose union of
+      Left union' -> union'
+      Right e1 -> inject (handler e1)
 
 
 runM :: Monad m => Eff '[m] a -> m a
-runM (Eff m) = foldFree extract m
+runM (Eff free) = foldFree extract free

@@ -5,6 +5,7 @@
 module Control.Monad.Free
   ( Free (..)
   , liftFree
+  , hoistFree
   , foldFree
   )
 where
@@ -40,7 +41,18 @@ liftFree :: Functor f => f a -> Free f a
 liftFree x = Free (fmap Pure x)
 
 
-foldFree :: (Functor f, Monad m) => (forall x. f x -> m x) -> Free f a -> m a
-foldFree fold = \case
+hoistFree
+  :: Functor f
+  => Functor g
+  => (forall x. f x -> g x)
+  -> Free f a
+  -> Free g a
+hoistFree f = \case
   Pure x -> pure x
-  Free x -> fold x >>= foldFree fold
+  Free x -> Free (f (fmap (hoistFree f) x))
+
+
+foldFree :: (Functor f, Monad m) => (forall x. f x -> m x) -> Free f a -> m a
+foldFree f = \case
+  Pure x -> pure x
+  Free x -> f x >>= foldFree f
