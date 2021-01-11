@@ -1,3 +1,3 @@
 # effect
 
-Toy effect system based on free monad
+Toy effect system based on freer monad
