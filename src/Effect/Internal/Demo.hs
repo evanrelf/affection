@@ -1,19 +1,23 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE TypeApplications #-}
 
 module Effect.Internal.Demo where
 
 import Data.Function ((&))
 import Effect (Eff, Members, runM)
 import Effect.Bell (Bell, ringBell, runBellIO)
+import Effect.Reader (Reader, ask, runReader)
 import Effect.Teletype (Teletype, readLine, runTeletypeIO, writeLine)
 
 
-program :: Members '[Teletype, Bell] es => Eff es ()
+program :: Members '[Reader String, Teletype, Bell] es => Eff es ()
 program = do
   message <- readLine
 
-  if message == "Ring the bell!" then do
+  triggerPhrase <- ask
+
+  if message == triggerPhrase then do
     ringBell
     writeLine "Rang the bell!"
 
@@ -24,6 +28,7 @@ program = do
 main :: IO ()
 main = do
   program
+    & runReader @IO "Ring the bell!"
     & runTeletypeIO
     & runBellIO
     & runM

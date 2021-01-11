@@ -36,4 +36,5 @@ library
     , Effect
     , Effect.Bell
     , Effect.Internal.Demo
+    , Effect.Reader
     , Effect.Teletype
