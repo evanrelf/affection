@@ -11,7 +11,11 @@ newtype Freer f a
 
 instance Functor (Freer f) where
   fmap :: (a -> b) -> Freer f a -> Freer f b
-  fmap a2b freer = Freer \fx2mx -> fmap a2b (runFreer freer fx2mx)
+  fmap a2b freer = Freer \fx2mx ->
+    let
+      x = runFreer freer fx2mx
+    in
+      fmap a2b x
 
 
 instance Applicative (Freer f) where
@@ -20,14 +24,21 @@ instance Applicative (Freer f) where
 
   (<*>) :: Freer f (a -> b) -> Freer f a -> Freer f b
   (<*>) freerF freerX = Freer \fx2mx ->
-    runFreer freerF fx2mx <*> runFreer freerX fx2mx
+    let
+      f = runFreer freerF fx2mx
+      x = runFreer freerX fx2mx
+    in
+      f <*> x
 
 
 instance Monad (Freer f) where
   (>>=) :: Freer f a -> (a -> Freer f b) -> Freer f b
-  (>>=) freer a2Fb = Freer \fx2mx -> do
-    a <- runFreer freer fx2mx
-    runFreer (a2Fb a) fx2mx
+  (>>=) freer a2Fb = Freer \fx2mx ->
+    let
+      m = runFreer freer fx2mx
+      k x = runFreer (a2Fb x) fx2mx
+    in
+      m >>= k
 
 
 liftFreer :: f a -> Freer f a
