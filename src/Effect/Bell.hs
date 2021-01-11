@@ -1,5 +1,6 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE GADTs #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE TypeOperators #-}
 
@@ -13,19 +14,17 @@ where
 import Effect (Eff, Member, interpret, send)
 
 
-data Bell a
-  = RingBell a
+data Bell a where
+  RingBell :: Bell ()
 
 
 ringBell :: Member Bell es => Eff es ()
-ringBell = send $ RingBell ()
+ringBell = send RingBell
 
 
 bellToIO :: Bell a -> IO a
 bellToIO = \case
-  RingBell k -> do
-    putStrLn "DING"
-    pure k
+  RingBell -> putStrLn "DING"
 
 
 runBellIO :: Member IO es => Eff (Bell ': es) a -> Eff es a

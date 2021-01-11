@@ -1,6 +1,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE GADTs #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
@@ -16,18 +17,17 @@ where
 import Effect (Eff, Member, interpret, send)
 
 
-data Reader r a
-  = Ask (r -> a)
+data Reader r a where
+  Ask :: Reader r r
 
 
 ask :: Member (Reader r) es => Eff es r
-ask = send $ Ask id
+ask = send Ask
 
 
 readerToM :: Monad m => r -> Reader r a -> m a
 readerToM r = \case
-  Ask k ->
-    pure $ k r
+  Ask -> pure r
 
 
 runReader

@@ -1,6 +1,7 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE ExistentialQuantification #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE GADTs #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeOperators #-}
@@ -19,22 +20,20 @@ import Effect.Internal.Freer (foldFreer)
 import Effect.Internal.OpenUnion (extract)
 
 
-data Embed m a
-  = forall x. Embed (m x) (x -> a)
+data Embed m a where
+  Embed :: Monad m => m a -> Embed m a
 
 
-embed :: Member (Embed m) es => m a -> Eff es a
-embed m = send $ Embed m id
+embed :: (Monad m, Member (Embed m) es) => m a -> Eff es a
+embed m = send $ Embed m
 
 
-embedToM :: Monad m => Embed m a -> m a
+embedToM :: Embed m a -> m a
 embedToM = \case
-  Embed m k -> do
-    x <- m
-    pure $ k x
+  Embed m -> m
 
 
-runEmbed :: (Monad m, Member m es) => Eff (Embed m ': es) a -> Eff es a
+runEmbed :: Member m es => Eff (Embed m ': es) a -> Eff es a
 runEmbed = interpret embedToM
 
 
