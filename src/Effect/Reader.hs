@@ -1,6 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -19,7 +18,6 @@ import Effect (Eff, Member, interpret, send)
 
 data Reader r a
   = Ask (r -> a)
-  deriving Functor
 
 
 ask :: Member (Reader r) es => Eff es r

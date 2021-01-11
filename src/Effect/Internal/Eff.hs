@@ -7,26 +7,25 @@
 
 module Effect.Internal.Eff where
 
-import Effect.Internal.Free (Free, foldFree, hoistFree, liftFree)
+import Effect.Internal.Freer (Freer, foldFreer, hoistFreer, liftFreer)
 import Effect.Internal.OpenUnion (Member (..), Union, decompose, extract)
 
 
-newtype Eff es a = Eff (Free (Union es) a)
+newtype Eff es a = Eff (Freer (Union es) a)
   deriving newtype (Functor, Applicative, Monad)
 
 
-send :: (Functor e, Member e es) => e a -> Eff es a
-send = Eff . liftFree . inject
+send :: Member e es => e a -> Eff es a
+send = Eff . liftFreer . inject
 
 
 interpret
   :: forall e1 e2 es a
-   . Functor e2
-  => Member e2 es
+   . Member e2 es
   => (forall x. e1 x -> e2 x)
   -> Eff (e1 ': es) a
   -> Eff es a
-interpret handler (Eff free) = Eff (hoistFree f free)
+interpret handler (Eff freer) = Eff (hoistFreer f freer)
   where
   f :: forall x. Union (e1 ': es) x -> Union es x
   f union =
@@ -36,4 +35,4 @@ interpret handler (Eff free) = Eff (hoistFree f free)
 
 
 runM :: Monad m => Eff '[m] a -> m a
-runM (Eff free) = foldFree extract free
+runM (Eff freer) = foldFreer extract freer

@@ -1,5 +1,4 @@
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE TypeOperators #-}
@@ -18,7 +17,6 @@ import Effect (Eff, Member, interpret, send)
 data Teletype a
   = ReadLine (String -> a)
   | WriteLine String a
-  deriving Functor
 
 
 readLine :: Member Teletype es => Eff es String

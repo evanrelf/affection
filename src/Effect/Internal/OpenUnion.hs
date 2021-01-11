@@ -18,24 +18,17 @@ type Effect = Type -> Type
 
 
 data Union (es :: [Effect]) a where
-  This :: Functor e => e a -> Union (e ': es) a
+  This :: e a -> Union (e ': es) a
   Next :: Union es a -> Union (any ': es) a
 
 
-instance Functor (Union es) where
-  fmap :: (a -> b) -> Union es a -> Union es b
-  fmap f = \case
-    This x -> This (fmap f x)
-    Next u -> Next (fmap f u)
-
-
 class Member e es where
-  inject :: Functor e => e a -> Union es a
+  inject :: e a -> Union es a
   project :: Union es a -> Maybe (e a)
 
 
 instance Member e (e ': es) where
-  inject :: Functor e => e a -> Union (e ': es) a
+  inject :: e a -> Union (e ': es) a
   inject = This
 
   project :: Union (e ': es) a -> Maybe (e a)
@@ -45,7 +38,7 @@ instance Member e (e ': es) where
 
 
 instance {-# OVERLAPPABLE #-} Member e es => Member e (any ': es) where
-  inject :: Functor e => e a -> Union (any ': es) a
+  inject :: e a -> Union (any ': es) a
   inject = Next . inject
 
   project :: Union (any ': es) a -> Maybe (e a)

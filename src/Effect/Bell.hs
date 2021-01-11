@@ -1,5 +1,4 @@
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE TypeOperators #-}
@@ -16,7 +15,6 @@ import Effect (Eff, Member, interpret, send)
 
 data Bell a
   = RingBell a
-  deriving Functor
 
 
 ringBell :: Member Bell es => Eff es ()

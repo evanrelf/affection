@@ -1,5 +1,4 @@
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE ExistentialQuantification #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE LambdaCase #-}
@@ -16,15 +15,12 @@ where
 
 import Effect (Member, interpret, send)
 import Effect.Internal.Eff (Eff (..))
-import Effect.Internal.Free (foldFree)
+import Effect.Internal.Freer (foldFreer)
 import Effect.Internal.OpenUnion (extract)
 
 
 data Embed m a
   = forall x. Embed (m x) (x -> a)
-
-
-deriving instance Functor (Embed m)
 
 
 embed :: Member (Embed m) es => m a -> Eff es a
@@ -43,4 +39,4 @@ runEmbed = interpret embedToM
 
 
 runM :: Monad m => Eff '[Embed m] a -> m a
-runM (Eff free) = foldFree (embedToM . extract) free
+runM (Eff freer) = foldFreer (embedToM . extract) freer
