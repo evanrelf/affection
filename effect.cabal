@@ -2,8 +2,8 @@ cabal-version: 3.0
 
 name:        effect
 version:     0.0.0.0
--- synopsis:
--- description:
+synopsis:    Toy effect system based on free monad
+description: Toy effect system based on free monad
 author:      Evan Relf <evan@evanrelf.com>
 maintainer:  Evan Relf <evan@evanrelf.com>
 homepage:    https://github.com/evanrelf/effect
