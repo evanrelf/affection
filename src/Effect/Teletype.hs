@@ -20,11 +20,11 @@ data Teletype a where
   WriteLine :: String -> Teletype ()
 
 
-readLine :: Member Teletype es => Eff es String
+readLine :: Member Teletype r => Eff r String
 readLine = send ReadLine
 
 
-writeLine :: Member Teletype es => String -> Eff es ()
+writeLine :: Member Teletype r => String -> Eff r ()
 writeLine message = send $ WriteLine message
 
 
@@ -34,5 +34,5 @@ teletypeToIO = \case
   WriteLine message -> putStrLn message
 
 
-runTeletypeIO :: Member IO es => Eff (Teletype ': es) a -> Eff es a
+runTeletypeIO :: Member IO r => Eff (Teletype ': r) a -> Eff r a
 runTeletypeIO = interpret teletypeToIO

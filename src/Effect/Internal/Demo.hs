@@ -11,7 +11,7 @@ import Effect.Reader (Reader, ask, runReader)
 import Effect.Teletype (Teletype, readLine, runTeletypeIO, writeLine)
 
 
-program :: Members '[Reader String, Teletype, Bell, Embed IO] es => Eff es ()
+program :: Members '[Reader String, Teletype, Bell, Embed IO] r => Eff r ()
 program = do
   message <- readLine
 

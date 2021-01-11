@@ -21,20 +21,20 @@ data Reader r a where
   Ask :: Reader r r
 
 
-ask :: Member (Reader r) es => Eff es r
+ask :: Member (Reader i) r => Eff r i
 ask = send Ask
 
 
-readerToM :: Monad m => r -> Reader r a -> m a
-readerToM r = \case
-  Ask -> pure r
+readerToM :: Monad m => i -> Reader i a -> m a
+readerToM i = \case
+  Ask -> pure i
 
 
 runReader
-  :: forall m r es a
+  :: forall m r i a
    . Monad m
-  => Member m es
-  => r
-  -> Eff (Reader r ': es) a
-  -> Eff es a
-runReader r = interpret (readerToM @m r)
+  => Member m r
+  => i
+  -> Eff (Reader i ': r) a
+  -> Eff r a
+runReader i = interpret (readerToM @m i)

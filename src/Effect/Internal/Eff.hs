@@ -11,23 +11,23 @@ import Effect.Internal.Freer (Freer, foldFreer, hoistFreer, liftFreer)
 import Effect.Internal.OpenUnion (Member (..), Union, decompose, extract)
 
 
-newtype Eff es a = Eff (Freer (Union es) a)
+newtype Eff r a = Eff (Freer (Union r) a)
   deriving newtype (Functor, Applicative, Monad)
 
 
-send :: Member e es => e a -> Eff es a
+send :: Member e r => e a -> Eff r a
 send = Eff . liftFreer . inject
 
 
 interpret
-  :: forall e1 e2 es a
-   . Member e2 es
+  :: forall e1 e2 r a
+   . Member e2 r
   => (forall x. e1 x -> e2 x)
-  -> Eff (e1 ': es) a
-  -> Eff es a
+  -> Eff (e1 ': r) a
+  -> Eff r a
 interpret handler (Eff freer) = Eff (hoistFreer f freer)
   where
-  f :: forall x. Union (e1 ': es) x -> Union es x
+  f :: forall x. Union (e1 ': r) x -> Union r x
   f union =
     case decompose union of
       Left union' -> union'

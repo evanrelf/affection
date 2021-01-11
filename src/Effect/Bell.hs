@@ -18,7 +18,7 @@ data Bell a where
   RingBell :: Bell ()
 
 
-ringBell :: Member Bell es => Eff es ()
+ringBell :: Member Bell r => Eff r ()
 ringBell = send RingBell
 
 
@@ -27,5 +27,5 @@ bellToIO = \case
   RingBell -> putStrLn "DING"
 
 
-runBellIO :: Member IO es => Eff (Bell ': es) a -> Eff es a
+runBellIO :: Member IO r => Eff (Bell ': r) a -> Eff r a
 runBellIO = interpret bellToIO

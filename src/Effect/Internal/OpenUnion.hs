@@ -17,48 +17,48 @@ import Data.Kind (Constraint, Type)
 type Effect = Type -> Type
 
 
-data Union (es :: [Effect]) a where
-  This :: e a -> Union (e ': es) a
-  Next :: Union es a -> Union (any ': es) a
+data Union (r :: [Effect]) a where
+  This :: e a -> Union (e ': r) a
+  Next :: Union r a -> Union (any ': r) a
 
 
-class Member e es where
-  inject :: e a -> Union es a
-  project :: Union es a -> Maybe (e a)
+class Member e r where
+  inject :: e a -> Union r a
+  project :: Union r a -> Maybe (e a)
 
 
-instance Member e (e ': es) where
-  inject :: e a -> Union (e ': es) a
+instance Member e (e ': r) where
+  inject :: e a -> Union (e ': r) a
   inject = This
 
-  project :: Union (e ': es) a -> Maybe (e a)
+  project :: Union (e ': r) a -> Maybe (e a)
   project = \case
     This x -> Just x
     Next _ -> Nothing
 
 
-instance {-# OVERLAPPABLE #-} Member e es => Member e (any ': es) where
-  inject :: e a -> Union (any ': es) a
+instance {-# OVERLAPPABLE #-} Member e r => Member e (any ': r) where
+  inject :: e a -> Union (any ': r) a
   inject = Next . inject
 
-  project :: Union (any ': es) a -> Maybe (e a)
+  project :: Union (any ': r) a -> Maybe (e a)
   project = \case
     Next u -> project u
     This _ -> Nothing
 
 
-type family Members (es :: [Effect]) (es' :: [Effect]) :: Constraint where
-  Members '[] _ = ()
-  Members (e ': es) es' = (Member e es', Members es es')
+type family Members es r :: Constraint where
+  Members '[] r = ()
+  Members (e ': es) r = (Member e r, Members es r)
 
 
-decompose :: Union (e ': es) a -> Either (Union es a) (e a)
+decompose :: Union (e ': r) a -> Either (Union r a) (e a)
 decompose = \case
   This x -> Right x
   Next u -> Left u
 
 
-weaken :: Union es a -> Union (any ': es) a
+weaken :: Union r a -> Union (any ': r) a
 weaken = Next
 
 

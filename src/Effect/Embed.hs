@@ -24,7 +24,7 @@ data Embed m a where
   Embed :: Monad m => m a -> Embed m a
 
 
-embed :: (Monad m, Member (Embed m) es) => m a -> Eff es a
+embed :: (Monad m, Member (Embed m) r) => m a -> Eff r a
 embed m = send $ Embed m
 
 
@@ -33,7 +33,7 @@ embedToM = \case
   Embed m -> m
 
 
-runEmbed :: Member m es => Eff (Embed m ': es) a -> Eff es a
+runEmbed :: Member m r => Eff (Embed m ': r) a -> Eff r a
 runEmbed = interpret embedToM
 
 
