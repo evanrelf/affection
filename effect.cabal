@@ -35,6 +35,7 @@ library
     , Data.OpenUnion
     , Effect
     , Effect.Bell
+    , Effect.Embed
     , Effect.Internal.Demo
     , Effect.Reader
     , Effect.Teletype
