@@ -5,8 +5,13 @@
 module Effect.Internal.Freer where
 
 
-newtype Freer f a
-  = Freer { runFreer :: forall m. Monad m => (forall x. f x -> m x) -> m a }
+newtype Freer f a = Freer
+  { runFreer
+      :: forall m
+       . Monad m
+      => (forall x. f x -> m x)
+      -> m a
+  }
 
 
 instance Functor (Freer f) where
