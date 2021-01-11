@@ -3,59 +3,27 @@
 
 module Effect.Internal.Demo where
 
-import Control.Monad.Free (Free (..), foldFree)
-import Data.OpenUnion (Member (..), Members, Union)
-import Effect (sumToM)
-import Effect.Bell (Bell (..), bellToIO)
-import Effect.Teletype (Teletype (..), readLine, teletypeToIO, writeLine)
+import Data.Function ((&))
+import Effect (Eff, Members, runM)
+import Effect.Bell (Bell, ringBell, runBellIO)
+import Effect.Teletype (Teletype, readLine, runTeletypeIO, writeLine)
 
 
-teletypeProgram :: Free Teletype ()
-teletypeProgram = do
+program :: Members '[Teletype, Bell] es => Eff es ()
+program = do
   message <- readLine
 
   if message == "Ring the bell!" then do
+    ringBell
     writeLine "Rang the bell!"
 
   else
     writeLine "Didn't ring the bell"
 
 
-teletypeMain :: IO ()
-teletypeMain = foldFree teletypeToIO teletypeProgram
-
-
-send :: (Functor e, Member e es) => e (Free (Union es) a) -> Free (Union es) a
-send = Free . inject
-
-
-readLine' :: Member Teletype es => Free (Union es) String
-readLine' = send $ ReadLine pure
-
-
-writeLine' :: Member Teletype es => String -> Free (Union es) ()
-writeLine' message = send $ WriteLine message (pure ())
-
-
-ringBell' :: Member Bell es => Free (Union es) ()
-ringBell' = send $ RingBell (pure ())
-
-
--- teletypeAndBellToIO :: TeletypeAndBell a -> IO a
--- teletypeAndBellToIO = sumToM teletypeToIO bellToIO
-
-
-teletypeAndBellProgram :: Members '[Teletype, Bell] es => Free (Union es) ()
-teletypeAndBellProgram = do
-  message <- readLine'
-
-  if message == "Ring the bell!" then do
-    ringBell'
-    writeLine' "Rang the bell!"
-
-  else
-    writeLine' "Didn't ring the bell"
-
-
--- teletypeAndBellMain :: IO ()
--- teletypeAndBellMain = foldFree teletypeAndBellToIO teletypeAndBellProgram
+main :: IO ()
+main = do
+  program
+    & runTeletypeIO
+    & runBellIO
+    & runM

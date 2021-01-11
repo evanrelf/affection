@@ -1,23 +1,26 @@
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveFunctor #-}
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE TypeOperators #-}
 
 module Effect.Bell
   ( Bell (..)
   , ringBell
-  , bellToIO
+  , runBellIO
   )
 where
 
-import Control.Monad.Free (Free (..))
+import Effect (Eff, Member, interpret, send)
 
 
-data Bell k
-  = RingBell k
+data Bell a
+  = RingBell a
   deriving Functor
 
 
-ringBell :: Free Bell ()
-ringBell = Free $ RingBell (pure ())
+ringBell :: Member Bell es => Eff es ()
+ringBell = send $ RingBell ()
 
 
 bellToIO :: Bell a -> IO a
@@ -25,3 +28,7 @@ bellToIO = \case
   RingBell k -> do
     putStrLn "DING"
     pure k
+
+
+runBellIO :: Member IO es => Eff (Bell ': es) a -> Eff es a
+runBellIO = interpret bellToIO

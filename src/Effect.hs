@@ -1,19 +1,38 @@
-{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE TypeOperators #-}
 
 module Effect
-  ( sumToM
+  ( Eff
+  , Member
+  , Members
+  , send
+  , interpret
+  , runM
   )
 where
 
-import Data.Functor.Sum (Sum (..))
+import Control.Monad.Free (Free, foldFree, liftFree)
+import Data.OpenUnion (Member (..), Members, Union, extract)
 
 
-sumToM
-  :: (forall x. f x -> m x)
-  -> (forall x. g x -> m x)
-  -> Sum f g a
-  -> m a
-sumToM runL runR = \case
-  InL x -> runL x
-  InR x -> runR x
+newtype Eff es a = Eff (Free (Union es) a)
+  deriving newtype (Functor, Applicative, Monad)
+
+
+send :: (Functor e, Member e es) => e a -> Eff es a
+send = Eff . liftFree . inject
+
+
+interpret
+  :: Member m es
+  => (forall x. e x -> m x)
+  -> Eff (e ': es) a
+  -> Eff es a
+interpret handler effect = undefined
+
+
+runM :: Monad m => Eff '[m] a -> m a
+runM (Eff m) = foldFree extract m

@@ -1,29 +1,32 @@
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveFunctor #-}
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE TypeOperators #-}
 
 module Effect.Teletype
   ( Teletype (..)
   , readLine
   , writeLine
-  , teletypeToIO
+  , runTeletypeIO
   )
 where
 
-import Control.Monad.Free (Free (..))
+import Effect (Eff, Member, interpret, send)
 
 
-data Teletype k
-  = ReadLine (String -> k)
-  | WriteLine String k
+data Teletype a
+  = ReadLine (String -> a)
+  | WriteLine String a
   deriving Functor
 
 
-readLine :: Free Teletype String
-readLine = Free $ ReadLine pure
+readLine :: Member Teletype es => Eff es String
+readLine = send $ ReadLine id
 
 
-writeLine :: String -> Free Teletype ()
-writeLine message = Free $ WriteLine message (pure ())
+writeLine :: Member Teletype es => String -> Eff es ()
+writeLine message = send $ WriteLine message ()
 
 
 teletypeToIO :: Teletype a -> IO a
@@ -35,3 +38,7 @@ teletypeToIO = \case
   WriteLine message k -> do
     putStrLn message
     pure k
+
+
+runTeletypeIO :: Member IO es => Eff (Teletype ': es) a -> Eff es a
+runTeletypeIO = interpret teletypeToIO
