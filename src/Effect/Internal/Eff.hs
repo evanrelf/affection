@@ -34,5 +34,19 @@ interpret handler (Eff freer) = Eff (hoistFreer f freer)
       Right e1 -> inject (handler e1)
 
 
+-- interpret2
+--   :: forall e r a
+--    . (forall x. e x -> Eff r x)
+--   -> Eff (e ': r) a
+--   -> Eff r a
+-- interpret2 handler (Eff freer) = Eff (hoistFreer pop freer)
+--   where
+--   pop :: forall x. Union (e ': r) x -> Union r x
+--   pop union =
+--     case decompose union of
+--       Left union' -> union'
+--       Right e -> _ $ handler e
+
+
 runM :: Monad m => Eff '[m] a -> m a
 runM (Eff freer) = foldFreer extract freer

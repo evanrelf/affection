@@ -6,12 +6,12 @@ module Effect.Internal.Demo where
 import Data.Function ((&))
 import Effect (Eff, Members, runM)
 import Effect.Bell (Bell, ringBell, runBellIO)
-import Effect.Embed (Embed, embed, runEmbed)
+import Effect.Lift (Lift, lift, runLift)
 import Effect.Reader (Reader, ask, runReader)
 import Effect.Teletype (Teletype, readLine, runTeletypeIO, writeLine)
 
 
-program :: Members '[Reader String, Teletype, Bell, Embed IO] r => Eff r ()
+program :: Members '[Reader String, Teletype, Bell, Lift IO] r => Eff r ()
 program = do
   message <- readLine
 
@@ -24,7 +24,7 @@ program = do
   else
     writeLine "Didn't ring the bell"
 
-  embed $ putStrLn "All done"
+  lift $ putStrLn "All done"
 
 
 main :: IO ()
@@ -33,5 +33,5 @@ main = do
     & runReader @IO "Ring the bell!"
     & runTeletypeIO
     & runBellIO
-    & runEmbed @IO
+    & runLift @IO
     & runM
