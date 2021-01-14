@@ -1,3 +1,4 @@
+{-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
@@ -7,11 +8,11 @@
 
 module Effect.Internal.Eff where
 
-import Effect.Internal.Freer (Freer, foldFreer, hoistFreer, liftFreer)
+import Effect.Internal.Freer (Freer (..), foldFreer, hoistFreer, liftFreer)
 import Effect.Internal.OpenUnion (Member (..), Union, decompose, extract)
 
 
-newtype Eff r a = Eff (Freer (Union r) a)
+newtype Eff r a = Eff { runEff :: Freer (Union r) a }
   deriving newtype (Functor, Applicative, Monad)
 
 
@@ -39,13 +40,13 @@ interpret handler (Eff freer) = Eff (hoistFreer f freer)
 --    . (forall x. e x -> Eff r x)
 --   -> Eff (e ': r) a
 --   -> Eff r a
--- interpret2 handler (Eff freer) = Eff (hoistFreer pop freer)
+-- interpret2 handler (Eff freer) = undefined
 --   where
---   pop :: forall x. Union (e ': r) x -> Union r x
---   pop union =
+--   pop :: (forall x. e x -> Eff r x) -> Union (e ': r) a -> Freer (Union r) a
+--   pop handler union =
 --     case decompose union of
---       Left union' -> union'
---       Right e -> _ $ handler e
+--       Left union' -> liftFreer union'
+--       Right e -> runEff $ handler e
 
 
 runM :: Monad m => Eff '[m] a -> m a
