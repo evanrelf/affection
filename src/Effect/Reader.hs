@@ -15,8 +15,8 @@ where
 import Effect (Eff, Member, interpret, send)
 
 
-data Reader r m a where
-  Ask :: Reader r m r
+data Reader i m a where
+  Ask :: Reader i m i
 
 
 ask :: Member (Reader i) r => Eff r i
