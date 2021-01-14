@@ -8,6 +8,7 @@
 module Effect.Reader
   ( Reader (..)
   , ask
+  , asks
   , runReader
   )
 where
@@ -21,6 +22,10 @@ data Reader i m a where
 
 ask :: Member (Reader i) r => Eff r i
 ask = send Ask
+
+
+asks :: Member (Reader i) r => (i -> j) -> Eff r j
+asks f = fmap f ask
 
 
 runReader :: i -> Eff (Reader i ': r) a -> Eff r a
