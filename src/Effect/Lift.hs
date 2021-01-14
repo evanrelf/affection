@@ -6,6 +6,9 @@
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE UndecidableInstances #-}
+
+{-# OPTIONS_GHC -Wno-orphans #-}
 
 module Effect.Lift
   ( Lift
@@ -14,6 +17,7 @@ module Effect.Lift
   )
 where
 
+import Control.Monad.IO.Class (MonadIO (..))
 import Effect (Member, send)
 import Effect.Internal.Eff (Eff (..), foldEff)
 import Effect.Internal.OpenUnion (extract)
@@ -29,3 +33,7 @@ lift m = send $ Lift m
 
 runM :: Monad m => Eff '[Lift m] a -> m a
 runM eff = foldEff (unLift . extract) eff
+
+
+instance Member (Lift IO) r => MonadIO (Eff r) where
+  liftIO = lift
