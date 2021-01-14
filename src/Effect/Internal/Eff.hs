@@ -1,8 +1,10 @@
+{-# LANGUAGE DerivingVia #-}
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE RankNTypes #-}
 
 module Effect.Internal.Eff where
 
+import Effect.Internal.Freer (Freer (..))
 import Effect.Internal.OpenUnion (Union)
 
 
@@ -12,39 +14,7 @@ newtype Eff r a = Eff
        . Monad m
       => (forall x. Union r (Eff r) x -> m x)
       -> m a
-  }
-
-
-instance Functor (Eff r) where
-  fmap :: (a -> b) -> Eff r a -> Eff r b
-  fmap a2b eff = Eff $ \toM ->
-    let
-      x = runEff eff toM
-    in
-      fmap a2b x
-
-
-instance Applicative (Eff r) where
-  pure :: a -> Eff r a
-  pure x = Eff $ \_ -> pure x
-
-  (<*>) :: Eff f (a -> b) -> Eff f a -> Eff f b
-  (<*>) effF effX = Eff $ \toM ->
-    let
-      f = runEff effF toM
-      x = runEff effX toM
-    in
-      f <*> x
-
-
-instance Monad (Eff r) where
-  (>>=) :: Eff r a -> (a -> Eff r b) -> Eff r b
-  (>>=) eff a2Eb = Eff $ \toM ->
-    let
-      m = runEff eff toM
-      k x = runEff (a2Eb x) toM
-    in
-      m >>= k
+  } deriving (Functor, Applicative, Monad) via Freer (Union r (Eff r))
 
 
 liftEff :: Union r (Eff r) a -> Eff r a
