@@ -1,4 +1,3 @@
-{-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GADTs #-}
@@ -26,5 +25,5 @@ ringBell = send RingBell
 
 
 runBellIO :: Member (Lift IO) r => Eff (Bell ': r) a -> Eff r a
-runBellIO = interpret \case
+runBellIO = interpret $ \case
   RingBell -> lift $ putStrLn "DING"

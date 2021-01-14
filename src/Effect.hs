@@ -7,4 +7,4 @@ where
 
 import Effect.Internal (interpret, send)
 import Effect.Internal.Eff (Eff)
-import Effect.Internal.OpenUnion (Effect, Member, Members)
+import Effect.Internal.OpenUnion (Member, Members)

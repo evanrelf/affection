@@ -1,12 +1,8 @@
-{-# LANGUAGE AllowAmbiguousTypes #-}
-{-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE PolyKinds #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeOperators #-}
 
 module Effect.Reader
@@ -28,5 +24,5 @@ ask = send Ask
 
 
 runReader :: i -> Eff (Reader i ': r) a -> Eff r a
-runReader i = interpret \case
+runReader i = interpret $ \case
   Ask -> pure i

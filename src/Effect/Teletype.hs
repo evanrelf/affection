@@ -1,4 +1,3 @@
-{-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GADTs #-}
@@ -32,6 +31,6 @@ writeLine message = send $ WriteLine message
 
 
 runTeletypeIO :: Member (Lift IO) r => Eff (Teletype ': r) a -> Eff r a
-runTeletypeIO = interpret \case
+runTeletypeIO = interpret $ \case
   ReadLine -> lift $ getLine
   WriteLine message -> lift $ putStrLn message
