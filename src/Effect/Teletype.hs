@@ -1,7 +1,9 @@
+{-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE TypeOperators #-}
 
 module Effect.Teletype
@@ -13,11 +15,12 @@ module Effect.Teletype
 where
 
 import Effect (Eff, Member, interpret, send)
+import Effect.Lift (Lift, lift)
 
 
-data Teletype a where
-  ReadLine :: Teletype String
-  WriteLine :: String -> Teletype ()
+data Teletype m a where
+  ReadLine :: Teletype m String
+  WriteLine :: String -> Teletype m ()
 
 
 readLine :: Member Teletype r => Eff r String
@@ -28,11 +31,7 @@ writeLine :: Member Teletype r => String -> Eff r ()
 writeLine message = send $ WriteLine message
 
 
-teletypeToIO :: Teletype a -> IO a
-teletypeToIO = \case
-  ReadLine -> getLine
-  WriteLine message -> putStrLn message
-
-
-runTeletypeIO :: Member IO r => Eff (Teletype ': r) a -> Eff r a
-runTeletypeIO = interpret teletypeToIO
+runTeletypeIO :: Member (Lift IO) r => Eff (Teletype ': r) a -> Eff r a
+runTeletypeIO = interpret \case
+  ReadLine -> lift $ getLine
+  WriteLine message -> lift $ putStrLn message

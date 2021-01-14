@@ -1,8 +1,10 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeOperators #-}
@@ -17,24 +19,14 @@ where
 import Effect (Eff, Member, interpret, send)
 
 
-data Reader r a where
-  Ask :: Reader r r
+data Reader r m a where
+  Ask :: Reader r m r
 
 
 ask :: Member (Reader i) r => Eff r i
 ask = send Ask
 
 
-readerToM :: Monad m => i -> Reader i a -> m a
-readerToM i = \case
+runReader :: i -> Eff (Reader i ': r) a -> Eff r a
+runReader i = interpret \case
   Ask -> pure i
-
-
-runReader
-  :: forall m r i a
-   . Monad m
-  => Member m r
-  => i
-  -> Eff (Reader i ': r) a
-  -> Eff r a
-runReader i = interpret (readerToM @m i)

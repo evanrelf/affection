@@ -1,53 +1,63 @@
 {-# LANGUAGE BlockArguments #-}
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE DerivingStrategies #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE RankNTypes #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TypeOperators #-}
 
 module Effect.Internal.Eff where
 
-import Effect.Internal.Freer (Freer (..), foldFreer, hoistFreer, liftFreer)
-import Effect.Internal.OpenUnion (Member (..), Union, decompose, extract)
+import Effect.Internal.OpenUnion (Union)
 
 
-newtype Eff r a = Eff { runEff :: Freer (Union r) a }
-  deriving newtype (Functor, Applicative, Monad)
+newtype Eff r a = Eff
+  { runEff
+      :: forall m
+       . Monad m
+      => (forall x. Union r (Eff r) x -> m x)
+      -> m a
+  }
 
 
-send :: Member e r => e a -> Eff r a
-send = Eff . liftFreer . inject
+instance Functor (Eff r) where
+  fmap :: (a -> b) -> Eff r a -> Eff r b
+  fmap a2b eff = Eff \toM ->
+    let
+      x = runEff eff toM
+    in
+      fmap a2b x
 
 
-interpret
-  :: forall e1 e2 r a
-   . Member e2 r
-  => (forall x. e1 x -> e2 x)
-  -> Eff (e1 ': r) a
+instance Applicative (Eff r) where
+  pure :: a -> Eff r a
+  pure x = Eff \_ -> pure x
+
+  (<*>) :: Eff f (a -> b) -> Eff f a -> Eff f b
+  (<*>) effF effX = Eff \toM ->
+    let
+      f = runEff effF toM
+      x = runEff effX toM
+    in
+      f <*> x
+
+
+instance Monad (Eff r) where
+  (>>=) :: Eff r a -> (a -> Eff r b) -> Eff r b
+  (>>=) eff a2Eb = Eff \toM ->
+    let
+      m = runEff eff toM
+      k x = runEff (a2Eb x) toM
+    in
+      m >>= k
+
+
+liftEff :: Union r (Eff r) a -> Eff r a
+liftEff union = Eff \toM -> toM union
+
+
+hoistEff
+  :: (forall x. Union r (Eff r) x -> Union r' (Eff r') x)
   -> Eff r a
-interpret handler (Eff freer) = Eff (hoistFreer f freer)
-  where
-  f :: forall x. Union (e1 ': r) x -> Union r x
-  f union =
-    case decompose union of
-      Left union' -> union'
-      Right e1 -> inject (handler e1)
+  -> Eff r' a
+hoistEff f eff = Eff \toM -> runEff eff (toM . f)
 
 
--- interpret2
---   :: forall e r a
---    . (forall x. e x -> Eff r x)
---   -> Eff (e ': r) a
---   -> Eff r a
--- interpret2 handler (Eff freer) = undefined
---   where
---   pop :: (forall x. e x -> Eff r x) -> Union (e ': r) a -> Freer (Union r) a
---   pop handler union =
---     case decompose union of
---       Left union' -> liftFreer union'
---       Right e -> runEff $ handler e
-
-
-runM :: Monad m => Eff '[m] a -> m a
-runM (Eff freer) = foldFreer extract freer
+foldEff :: Monad m => (forall x. Union r (Eff r) x -> m x) -> Eff r a -> m a
+foldEff toM eff = runEff eff toM
