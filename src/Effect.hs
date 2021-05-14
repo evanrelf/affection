@@ -5,6 +5,6 @@ module Effect
   )
 where
 
-import Effect.Internal (interpret, send)
+import Effect.Internal (interpret, runM, send)
 import Effect.Internal.Eff (Eff)
 import Effect.Internal.OpenUnion (Member, Members)

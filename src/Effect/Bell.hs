@@ -2,7 +2,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeOperators #-}
 
 module Effect.Bell
@@ -13,17 +13,16 @@ module Effect.Bell
 where
 
 import Effect (Eff, Member, interpret, send)
-import Effect.Lift (Lift, lift)
 
 
-data Bell m a where
-  RingBell :: Bell m ()
+data Bell a where
+  RingBell :: Bell ()
 
 
 ringBell :: Member Bell r => Eff r ()
 ringBell = send RingBell
 
 
-runBellIO :: Member (Lift IO) r => Eff (Bell ': r) a -> Eff r a
-runBellIO = interpret $ \case
-  RingBell -> lift $ putStrLn "DING"
+runBellIO :: Member IO r => Eff (Bell ': r) a -> Eff r a
+runBellIO = interpret @IO $ \case
+  RingBell -> putStrLn "DING"

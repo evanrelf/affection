@@ -35,7 +35,6 @@ library
     , Effect
     -- Included effects
     , Effect.Bell
-    , Effect.Lift
     , Effect.Reader
     , Effect.Teletype
     -- Internals
