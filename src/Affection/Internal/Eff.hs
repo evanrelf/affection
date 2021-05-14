@@ -3,10 +3,10 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE TypeOperators #-}
 
-module Effect.Internal.Eff where
+module Affection.Internal.Eff where
 
-import Effect.Internal.Freer (Freer (..))
-import Effect.Internal.OpenUnion (Union)
+import Affection.Internal.Freer (Freer (..))
+import Affection.Internal.OpenUnion (Union)
 
 
 newtype Eff r a = Eff

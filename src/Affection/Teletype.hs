@@ -5,7 +5,7 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeOperators #-}
 
-module Effect.Teletype
+module Affection.Teletype
   ( Teletype (..)
   , readLine
   , writeLine
@@ -13,7 +13,7 @@ module Effect.Teletype
   )
 where
 
-import Effect (Eff, Member, interpret, send)
+import Affection (Eff, Member, interpret, send)
 
 
 data Teletype a where

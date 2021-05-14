@@ -6,11 +6,11 @@
 
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-module Effect.Internal where
+module Affection.Internal where
 
 import Control.Monad.IO.Class (MonadIO (..))
-import Effect.Internal.Eff (Eff (..), foldEff, hoistEff, liftEff)
-import Effect.Internal.OpenUnion (Member (..), decompose, extract, inject)
+import Affection.Internal.Eff (Eff (..), foldEff, hoistEff, liftEff)
+import Affection.Internal.OpenUnion (Member (..), decompose, extract, inject)
 
 
 send :: Member e r => e a -> Eff r a

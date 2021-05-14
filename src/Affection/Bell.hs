@@ -5,14 +5,14 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeOperators #-}
 
-module Effect.Bell
+module Affection.Bell
   ( Bell (..)
   , ringBell
   , runBellIO
   )
 where
 
-import Effect (Eff, Member, interpret, send)
+import Affection (Eff, Member, interpret, send)
 
 
 data Bell a where

@@ -7,7 +7,7 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeOperators #-}
 
-module Effect.Reader
+module Affection.Reader
   ( Reader (..)
   , ask
   , asks
@@ -15,7 +15,7 @@ module Effect.Reader
   )
 where
 
-import Effect (Eff, Member, interpret, send)
+import Affection (Eff, Member, interpret, send)
 
 
 data Reader i a where

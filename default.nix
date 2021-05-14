@@ -2,7 +2,7 @@ let
   haskellPackagesOverlay =
     import ./nix/override-haskell-packages.nix {
       packages = {
-        "effect" = pkgs.nix-gitignore.gitignoreSource [ ./.nixignore ] ./.;
+        "affection" = pkgs.nix-gitignore.gitignoreSource [ ./.nixignore ] ./.;
       };
       overrides = {};
       hackage = {
@@ -15,4 +15,4 @@ let
   pkgs = import ./nix/nixpkgs.nix { overlays = [ haskellPackagesOverlay ]; };
 
 in
-  pkgs.haskellPackages.effect
+  pkgs.haskellPackages.affection

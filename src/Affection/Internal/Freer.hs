@@ -1,7 +1,7 @@
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE RankNTypes #-}
 
-module Effect.Internal.Freer where
+module Affection.Internal.Freer where
 
 
 newtype Freer f a = Freer

@@ -1,12 +1,12 @@
 cabal-version: 3.0
 
-name:        effect
+name:        affection
 version:     0.0.0.0
 synopsis:    Toy effect system based on freer monad
 description: Toy effect system based on freer monad
 author:      Evan Relf <evan@evanrelf.com>
 maintainer:  Evan Relf <evan@evanrelf.com>
-homepage:    https://github.com/evanrelf/effect
+homepage:    https://github.com/evanrelf/affection
 license:     ISC
 copyright:   2021 Evan Relf
 
@@ -32,15 +32,15 @@ library
   hs-source-dirs: src
   exposed-modules:
     -- Defining effects
-    , Effect
+    , Affection
     -- Included effects
-    , Effect.Bell
-    , Effect.Reader
-    , Effect.Teletype
+    , Affection.Bell
+    , Affection.Reader
+    , Affection.Teletype
     -- Internals
-    , Effect.Internal
-    , Effect.Internal.Eff
-    , Effect.Internal.Freer
-    , Effect.Internal.OpenUnion
+    , Affection.Internal
+    , Affection.Internal.Eff
+    , Affection.Internal.Freer
+    , Affection.Internal.OpenUnion
   other-modules:
-    , Effect.Internal.Demo
+    , Affection.Internal.Demo

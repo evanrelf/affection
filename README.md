@@ -1,4 +1,4 @@
-# effect
+# affection
 
 Toy effect system based on freer monad
 
