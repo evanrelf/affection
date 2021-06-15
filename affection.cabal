@@ -27,6 +27,14 @@ common common
     -fshow-warning-groups
 
 
+common executable
+  build-depends: affection
+  ghc-options:
+    -threaded
+    -rtsopts
+    -with-rtsopts=-N
+
+
 library
   import: common
   hs-source-dirs: src
@@ -42,5 +50,10 @@ library
     , Affection.Internal.Eff
     , Affection.Internal.Freer
     , Affection.Internal.OpenUnion
-  other-modules:
-    , Affection.Internal.Demo
+
+
+executable example
+  import:
+    , common
+    , executable
+  main-is: example.hs

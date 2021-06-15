@@ -1,14 +1,14 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE TypeApplications #-}
 
-module Affection.Internal.Demo where
+module Main (main) where
 
-import Control.Monad.IO.Class (liftIO)
-import Data.Function ((&))
 import Affection (Eff, Members, runM)
 import Affection.Bell (Bell, ringBell, runBellIO)
 import Affection.Reader (Reader, ask, runReader)
 import Affection.Teletype (Teletype, readLine, runTeletypeIO, writeLine)
+import Control.Monad.IO.Class (liftIO)
+import Data.Function ((&))
 
 
 program :: Members '[Reader String, Teletype, Bell, IO] r => Eff r ()
