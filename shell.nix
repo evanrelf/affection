@@ -1,12 +1,11 @@
 let
-  pkgs = import ./nix/nixpkgs.nix { };
-
-  affection = import ./default.nix;
+  pkgs = import <nixpkgs> { };
 
 in
-affection.env.overrideAttrs (old: {
-  buildInputs = with pkgs; old.buildInputs ++ [
+pkgs.mkShell {
+  buildInputs = with pkgs; [
     cabal-install
+    ghc
     ghcid
   ];
-})
+}
