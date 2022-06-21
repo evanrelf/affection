@@ -6,7 +6,7 @@
 module Affection.Internal.Eff where
 
 import Affection.Internal.Freer (Freer (..))
-import Affection.Internal.OpenUnion (Union)
+import Affection.Internal.Union (Union)
 
 
 newtype Eff r a = Eff

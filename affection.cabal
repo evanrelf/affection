@@ -44,7 +44,7 @@ library
     Affection.Internal
     Affection.Internal.Eff
     Affection.Internal.Freer
-    Affection.Internal.OpenUnion
+    Affection.Internal.Union
 
 
 executable example

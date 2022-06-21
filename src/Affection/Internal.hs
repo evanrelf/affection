@@ -10,7 +10,7 @@ module Affection.Internal where
 
 import Control.Monad.IO.Class (MonadIO (..))
 import Affection.Internal.Eff (Eff (..), foldEff, hoistEff, liftEff)
-import Affection.Internal.OpenUnion (Member (..), decompose, extract, inject)
+import Affection.Internal.Union (Member (..), decompose, extract, inject)
 
 
 send :: Member e r => e a -> Eff r a

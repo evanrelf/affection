@@ -8,7 +8,7 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
 
-module Affection.Internal.OpenUnion where
+module Affection.Internal.Union where
 
 import Data.Kind (Constraint, Type)
 
