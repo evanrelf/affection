@@ -1,4 +1,4 @@
-cabal-version: 3.0
+cabal-version: 2.2
 
 name:        affection
 version:     0.0.0.0
@@ -40,16 +40,16 @@ library
   hs-source-dirs: src
   exposed-modules:
     -- Defining effects
-    , Affection
+    Affection
     -- Included effects
-    , Affection.Bell
-    , Affection.Reader
-    , Affection.Teletype
+    Affection.Bell
+    Affection.Reader
+    Affection.Teletype
     -- Internals
-    , Affection.Internal
-    , Affection.Internal.Eff
-    , Affection.Internal.Freer
-    , Affection.Internal.OpenUnion
+    Affection.Internal
+    Affection.Internal.Eff
+    Affection.Internal.Freer
+    Affection.Internal.OpenUnion
 
 
 executable example
