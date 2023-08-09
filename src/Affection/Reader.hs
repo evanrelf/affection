@@ -30,10 +30,6 @@ asks :: Member (Reader i) r => (i -> j) -> Eff r j
 asks f = fmap f ask
 
 
-runReader
-  :: forall r i a
-   . i
-  -> Eff (Reader i : r) a
-  -> Eff r a
+runReader :: forall r i a. i -> Eff (Reader i : r) a -> Eff r a
 runReader i = interpret $ \case
   Ask -> pure i

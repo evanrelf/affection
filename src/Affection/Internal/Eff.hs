@@ -15,17 +15,15 @@ newtype Eff r a = Eff
        . Monad m
       => (forall x. Union r x -> m x)
       -> m a
-  } deriving (Functor, Applicative, Monad) via Freer (Union r)
+  }
+  deriving (Functor, Applicative, Monad) via Freer (Union r)
 
 
 liftEff :: Union r a -> Eff r a
 liftEff union = Eff $ \toM -> toM union
 
 
-hoistEff
-  :: (forall x. Union r x -> Union r' x)
-  -> Eff r a
-  -> Eff r' a
+hoistEff :: (forall x. Union r x -> Union r' x) -> Eff r a -> Eff r' a
 hoistEff f eff = Eff $ \toM -> runEff eff (toM . f)
 
 

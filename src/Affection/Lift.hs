@@ -31,9 +31,5 @@ instance Member (Lift IO) r => MonadIO (Eff r) where
   liftIO io = send (Lift io)
 
 
-runM
-  :: forall m a
-   . Monad m
-  => Eff '[Lift m] a
-  -> m a
+runM :: forall m a. Monad m => Eff '[Lift m] a -> m a
 runM eff = foldEff ((\(Lift m) -> m) . extract) eff
