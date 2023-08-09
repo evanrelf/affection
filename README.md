@@ -15,7 +15,7 @@ readLine = send ReadLine
 writeLine :: Member Teletype r => String -> Eff r ()
 writeLine message = send $ WriteLine message
 
-runTeletypeIO :: Member IO r => Eff (Teletype ': r) a -> Eff r a
+runTeletypeIO :: Member IO r => Eff (Teletype : r) a -> Eff r a
 runTeletypeIO = interpret @IO $ \case
   ReadLine -> getLine
   WriteLine message -> putStrLn message

@@ -17,8 +17,8 @@ type Effect = Type -> Type
 
 
 data Union (r :: [Effect]) a where
-  This :: e a -> Union (e ': r) a
-  Next :: Union r a -> Union (any ': r) a
+  This :: e a -> Union (e : r) a
+  Next :: Union r a -> Union (any : r) a
 
 
 class Member e r where
@@ -26,21 +26,21 @@ class Member e r where
   project :: Union r a -> Maybe (e a)
 
 
-instance Member e (e ': r) where
-  inject :: e a -> Union (e ': r) a
+instance Member e (e : r) where
+  inject :: e a -> Union (e : r) a
   inject = This
 
-  project :: Union (e ': r) a -> Maybe (e a)
+  project :: Union (e : r) a -> Maybe (e a)
   project = \case
     This x -> Just x
     Next _ -> Nothing
 
 
-instance {-# OVERLAPPABLE #-} Member e r => Member e (any ': r) where
-  inject :: e a -> Union (any ': r) a
+instance {-# OVERLAPPABLE #-} Member e r => Member e (any : r) where
+  inject :: e a -> Union (any : r) a
   inject = Next . inject
 
-  project :: Union (any ': r) a -> Maybe (e a)
+  project :: Union (any : r) a -> Maybe (e a)
   project = \case
     This _ -> Nothing
     Next u -> project u
@@ -48,16 +48,16 @@ instance {-# OVERLAPPABLE #-} Member e r => Member e (any ': r) where
 
 type family Members es r :: Constraint where
   Members '[] r = ()
-  Members (e ': es) r = (Member e r, Members es r)
+  Members (e : es) r = (Member e r, Members es r)
 
 
-decompose :: Union (e ': r) a -> Either (Union r a) (e a)
+decompose :: Union (e : r) a -> Either (Union r a) (e a)
 decompose = \case
   This x -> Right x
   Next u -> Left u
 
 
-weaken :: Union r a -> Union (any ': r) a
+weaken :: Union r a -> Union (any : r) a
 weaken = Next
 
 

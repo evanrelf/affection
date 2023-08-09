@@ -24,7 +24,7 @@ ringBell :: Member Bell r => Eff r ()
 ringBell = send RingBell
 
 
-runBellIO :: Member IO r => Eff (Bell ': r) a -> Eff r a
+runBellIO :: Member IO r => Eff (Bell : r) a -> Eff r a
 runBellIO = interpret @IO $ \case
   RingBell -> putStrLn "DING"
 
@@ -45,7 +45,7 @@ writeLine :: Member Teletype r => String -> Eff r ()
 writeLine message = send $ WriteLine message
 
 
-runTeletypeIO :: Member IO r => Eff (Teletype ': r) a -> Eff r a
+runTeletypeIO :: Member IO r => Eff (Teletype : r) a -> Eff r a
 runTeletypeIO = interpret @IO $ \case
   ReadLine -> getLine
   WriteLine message -> putStrLn message
@@ -54,7 +54,7 @@ runTeletypeIO = interpret @IO $ \case
 -- Program
 
 
-program :: Members '[Reader String, Teletype, Bell, IO] r => Eff r ()
+program :: Members [Reader String, Teletype, Bell, IO] r => Eff r ()
 program = do
   message <- readLine
 

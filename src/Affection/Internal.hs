@@ -21,7 +21,7 @@ interpret
   :: forall e2 e1 r a
    . Member e2 r
   => (forall x. e1 x -> e2 x)
-  -> Eff (e1 ': r) a
+  -> Eff (e1 : r) a
   -> Eff r a
 interpret handler = hoistEff $ \union ->
   case decompose union of

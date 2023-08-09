@@ -35,7 +35,7 @@ runReader
    . Monad m
   => Member m r
   => i
-  -> Eff (Reader i ': r) a
+  -> Eff (Reader i : r) a
   -> Eff r a
 runReader i = interpret @m $ \case
   Ask -> pure i
