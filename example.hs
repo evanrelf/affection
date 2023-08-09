@@ -7,7 +7,8 @@
 
 module Main (main) where
 
-import Affection (Eff, Member, Members, interpret, runM, send)
+import Affection (Eff, Member, Members, interpret, send)
+import Affection.Lift (Lift, runM)
 import Affection.Reader (Reader, ask, runReader)
 import Control.Monad.IO.Class (liftIO)
 import Data.Function ((&))
@@ -24,7 +25,7 @@ ringBell :: Member Bell r => Eff r ()
 ringBell = send RingBell
 
 
-runBellIO :: Member IO r => Eff (Bell : r) a -> Eff r a
+runBellIO :: Member (Lift IO) r => Eff (Bell : r) a -> Eff r a
 runBellIO = interpret $ \case
   RingBell -> liftIO $ putStrLn "DING"
 
@@ -45,7 +46,7 @@ writeLine :: Member Teletype r => String -> Eff r ()
 writeLine message = send $ WriteLine message
 
 
-runTeletypeIO :: Member IO r => Eff (Teletype : r) a -> Eff r a
+runTeletypeIO :: Member (Lift IO) r => Eff (Teletype : r) a -> Eff r a
 runTeletypeIO = interpret $ \case
   ReadLine -> liftIO getLine
   WriteLine message -> liftIO $ putStrLn message
@@ -54,7 +55,7 @@ runTeletypeIO = interpret $ \case
 -- Program
 
 
-program :: Members [Reader String, Teletype, Bell, IO] r => Eff r ()
+program :: Members [Reader String, Teletype, Bell, Lift IO] r => Eff r ()
 program = do
   writeLine "What would you like to do?"
 

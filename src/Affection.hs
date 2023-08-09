@@ -5,6 +5,6 @@ module Affection
   )
 where
 
-import Affection.Internal (interpret, runM, send)
+import Affection.Internal (interpret, send)
 import Affection.Internal.Eff (Eff)
 import Affection.Internal.Union (Member, Members)

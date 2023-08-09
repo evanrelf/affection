@@ -40,11 +40,12 @@ library
   hs-source-dirs: src
   exposed-modules:
     Affection
-    Affection.Reader
     Affection.Internal
     Affection.Internal.Eff
     Affection.Internal.Freer
     Affection.Internal.Union
+    Affection.Lift
+    Affection.Reader
 
 
 executable example
