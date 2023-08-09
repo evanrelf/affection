@@ -7,7 +7,7 @@
 
 module Main (main) where
 
-import Affection (Eff, Member, Members, interpret, send)
+import Affection (Eff, Member, Members, interpret, run, send)
 import Affection.Lift (Lift, runM)
 import Affection.Reader (Reader, ask, runReader)
 import Control.Monad.IO.Class (liftIO)
@@ -75,8 +75,17 @@ program = do
 
 main :: IO ()
 main = do
+  -- Effectful program
   program
     & runReader "Ring the bell!"
     & runTeletypeIO
     & runBellIO
     & runM
+
+  -- Pure program
+  let greeting :: String
+      greeting = run . runReader "Evan" $ do
+        name <- ask
+        pure $ "Hello, " <> name <> "!"
+
+  putStrLn greeting
