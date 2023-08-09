@@ -25,8 +25,8 @@ ringBell = send RingBell
 
 
 runBellIO :: Member IO r => Eff (Bell : r) a -> Eff r a
-runBellIO = interpret @IO $ \case
-  RingBell -> putStrLn "DING"
+runBellIO = interpret $ \case
+  RingBell -> liftIO $ putStrLn "DING"
 
 
 -- Teletype
@@ -46,9 +46,9 @@ writeLine message = send $ WriteLine message
 
 
 runTeletypeIO :: Member IO r => Eff (Teletype : r) a -> Eff r a
-runTeletypeIO = interpret @IO $ \case
-  ReadLine -> getLine
-  WriteLine message -> putStrLn message
+runTeletypeIO = interpret $ \case
+  ReadLine -> liftIO getLine
+  WriteLine message -> liftIO $ putStrLn message
 
 
 -- Program
@@ -56,6 +56,8 @@ runTeletypeIO = interpret @IO $ \case
 
 program :: Members [Reader String, Teletype, Bell, IO] r => Eff r ()
 program = do
+  writeLine "What would you like to do?"
+
   message <- readLine
 
   triggerPhrase <- ask
@@ -73,7 +75,7 @@ program = do
 main :: IO ()
 main = do
   program
-    & runReader @IO "Ring the bell!"
+    & runReader "Ring the bell!"
     & runTeletypeIO
     & runBellIO
     & runM

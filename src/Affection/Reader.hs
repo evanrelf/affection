@@ -31,11 +31,9 @@ asks f = fmap f ask
 
 
 runReader
-  :: forall m r i a
-   . Monad m
-  => Member m r
-  => i
+  :: forall r i a
+   . i
   -> Eff (Reader i : r) a
   -> Eff r a
-runReader i = interpret @m $ \case
+runReader i = interpret $ \case
   Ask -> pure i

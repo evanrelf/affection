@@ -9,7 +9,7 @@
 module Affection.Internal where
 
 import Control.Monad.IO.Class (MonadIO (..))
-import Affection.Internal.Eff (Eff (..), foldEff, hoistEff, liftEff)
+import Affection.Internal.Eff (Eff (..), foldEff, liftEff)
 import Affection.Internal.Union (Member (..), decompose, extract, inject)
 
 
@@ -18,15 +18,14 @@ send = liftEff . inject
 
 
 interpret
-  :: forall e2 e1 r a
-   . Member e2 r
-  => (forall x. e1 x -> e2 x)
-  -> Eff (e1 : r) a
+  :: forall e r a
+   . (forall x. e x -> Eff r x)
+  -> Eff (e : r) a
   -> Eff r a
-interpret handler = hoistEff $ \union ->
+interpret handler = foldEff $ \union ->
   case decompose union of
-    Left u -> u
-    Right e -> inject (handler e)
+    Left u -> liftEff u
+    Right e -> handler e
 
 
 instance Member IO r => MonadIO (Eff r) where
