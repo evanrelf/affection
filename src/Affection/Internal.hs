@@ -1,5 +1,6 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE TupleSections #-}
 {-# LANGUAGE TypeOperators #-}
 
 module Affection.Internal where
@@ -22,6 +23,18 @@ interpret handler = foldEff $ \union ->
   case decompose union of
     Left u -> liftEff u
     Right e -> handler e
+
+
+stateful
+  :: forall e s r a
+   . (forall x. e x -> s -> Eff r (s, x))
+  -> s
+  -> Eff (e : r) a
+  -> Eff r (s, a)
+stateful handler s = foldEff' s $ \union s ->
+  case decompose union of
+    Left u -> (s, ) <$> liftEff u
+    Right e -> handler e s
 
 
 run :: forall a. Eff '[] a -> a

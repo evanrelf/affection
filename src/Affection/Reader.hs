@@ -26,7 +26,7 @@ ask :: Member (Reader i) r => Eff r i
 ask = send Ask
 
 
-asks :: Member (Reader i) r => (i -> j) -> Eff r j
+asks :: Member (Reader i) r => (i -> i') -> Eff r i'
 asks f = fmap f ask
 
 

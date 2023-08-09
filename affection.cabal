@@ -46,6 +46,7 @@ library
     Affection.Internal.Union
     Affection.Lift
     Affection.Reader
+    Affection.State
 
 
 executable example
